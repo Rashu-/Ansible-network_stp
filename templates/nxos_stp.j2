@@ -1,0 +1,53 @@
+{% if 'mode' in stp_config -%}
+spanning-tree mode {{ stp_config.mode }} {{ "\n" }}
+{%- endif -%}
+
+{%- if 'priority' in stp_config -%}
+{% set all_vlans =[] %}
+  {%- if vlans is defined -%}
+	  {%- for vlan in vlans -%}
+	    {%- if vlan.state != "absent" -%}
+		    {% set all_vlans = all_vlans.append(vlan.id) %}
+		{%- endif %}       
+	  {%- endfor -%}
+  {%- endif %}
+  {%- if vlan_range is defined -%}
+    {%- for vlan in vlan_range -%}
+	    {%- if vlan.state != "absent" -%}
+		    {% set all_vlans = all_vlans.append(vlan.ids) %}
+		{%- endif %}       
+	{%- endfor -%}    
+  {%- endif -%}
+  {%- if all_vlans|length < 1 -%}
+    {% set all_vlans = [1] %}
+  {% endif %}
+spanning-tree vlan {{ all_vlans|join(',') | default('1') }} priority {{ stp_config.priority }} {{ "\n" }}
+{%- endif -%}
+
+{%- if 'edge_default' in stp_config -%}
+  {%- if stp_config.edge_default -%}
+spanning-tree port type edge default {{ "\n" }}
+  {%- else -%}
+no spanning-tree port type edge default {{ "\n" }} 
+  {%- endif %}  
+{%- endif -%}
+
+{%- if 'portfast_bdpug_def' in stp_config -%}
+  {%- if stp_config.portfast_bdpug_def -%}
+spanning-tree port type edge bpduguard default {{ "\n" }}
+  {%- else -%}
+no spanning-tree port type edge bpduguard default {{ "\n" }} 
+  {%- endif %}  
+{%- endif -%}
+
+{%- if 'loopguard_default' in stp_config -%}
+  {%- if stp_config.loopguard_default -%}
+spanning-tree loopguard default {{ "\n" }}
+  {%- else -%}
+no spanning-tree loopguard default {{ "\n" }} 
+  {%- endif -%}  
+{%- endif -%}
+
+{%- if 'pathcost_method' in stp_config -%}
+spanning-tree pathcost method {{ stp_config.pathcost_method }} {{ "\n" }}
+{%- endif -%}

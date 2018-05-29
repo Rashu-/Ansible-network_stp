@@ -1,0 +1,43 @@
+---
+
+- name: Check network device OS
+  assert:
+    that: >
+      ansible_network_os == 'nxos' or
+      ansible_network_os == 'ios'
+    msg: "Network device OS not defined or not supported by this role: {{ ansible_network_os }}"
+  tags:
+    - stp_config
+
+- name: create temp file
+  tempfile:
+    state: file
+    prefix: ansible_
+    suffix: "_{{ inventory_hostname }}"
+  register: network_stp_file
+  notify: delete temp file
+  tags:
+    - stp_config
+
+- name: Create STP configuration in temp file
+  template:
+    src: "{{ ansible_network_os }}_stp.j2"
+    dest: "{{ network_stp_file.path }}"         
+  tags: 
+    - stp_config
+
+- name: display config file content
+  debug: msg="{{ lookup('file', network_stp_file.path).split('\n') }}"
+  when: 
+    - stp_display_config is defined
+    - stp_display_config
+  ignore_errors: true
+  tags: 
+    - stp_config  
+
+- name: Push stp config to devices
+  nxos_config:
+    src: "{{ network_stp_file.path }}"
+    save_when: modified
+  tags: 
+    - stp_config

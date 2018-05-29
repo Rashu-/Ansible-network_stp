@@ -1,0 +1,12 @@
+---
+# Define the vlan range to be added in STP, these should already be present as vars from the vlan role (see README for examples)
+vlan_range:  {}
+
+# Define the vlans to be added in STP, these should already be present as vars from the vlan role (see README for examples)
+vlans: {}
+
+# Define the STP parameters
+stp_config: {}
+
+# If you want to see what config is being pushed to the device, set this var true
+stp_display_config: {}
