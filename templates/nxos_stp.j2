@@ -24,7 +24,7 @@ spanning-tree vlan {{ all_vlans|join(',') }} priority {{ stp_config.priority }} 
 {%- endif -%}
 
 {%- if 'edge_default' in stp_config -%}
-  {%- if stp_config.edge_default -%}
+  {%- if stp_config.edge_default is sameas true -%}
 spanning-tree port type edge default {{ "\n" }}
   {%- else -%}
 no spanning-tree port type edge default {{ "\n" }} 
@@ -32,7 +32,7 @@ no spanning-tree port type edge default {{ "\n" }}
 {%- endif -%}
 
 {%- if 'portfast_bdpug_def' in stp_config -%}
-  {%- if stp_config.portfast_bdpug_def -%}
+  {%- if stp_config.portfast_bdpug_def is sameas true -%}
 spanning-tree port type edge bpduguard default {{ "\n" }}
   {%- else -%}
 no spanning-tree port type edge bpduguard default {{ "\n" }} 
@@ -40,7 +40,7 @@ no spanning-tree port type edge bpduguard default {{ "\n" }}
 {%- endif -%}
 
 {%- if 'loopguard_default' in stp_config -%}
-  {%- if stp_config.loopguard_default -%}
+  {%- if stp_config.loopguard_default is sameas true -%}
 spanning-tree loopguard default {{ "\n" }}
   {%- else -%}
 no spanning-tree loopguard default {{ "\n" }} 
