@@ -18,10 +18,9 @@ spanning-tree mode {{ stp_config.mode }} {{ "\n" }}
 		{%- endif %}       
 	{%- endfor -%}    
   {%- endif -%}
-  {%- if all_vlans|length < 1 -%}
-    {% set all_vlans = [1] %}
-  {% endif %}
-spanning-tree vlan {{ all_vlans|join(',') | default('1') }} priority {{ stp_config.priority }} {{ "\n" }}
+  {%- if all_vlans|length > 0 -%}
+spanning-tree vlan {{ all_vlans|join(',') }} priority {{ stp_config.priority }} {{ "\n" }}
+  {%- endif %}
 {%- endif -%}
 
 {%- if 'edge_default' in stp_config -%}

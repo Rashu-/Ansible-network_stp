@@ -15,7 +15,9 @@
     prefix: ansible_
     suffix: "_{{ inventory_hostname }}"
   register: network_stp_file
-  notify: delete temp file
+  notify: delete temp file  
+  check_mode: no
+  changed_when: false
   tags:
     - stp_config
 
@@ -23,6 +25,7 @@
   template:
     src: "{{ ansible_network_os }}_stp.j2"
     dest: "{{ network_stp_file.path }}"         
+  changed_when: false  
   tags: 
     - stp_config
 

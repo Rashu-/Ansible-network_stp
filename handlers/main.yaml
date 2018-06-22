@@ -4,6 +4,7 @@
   file:
     path: "{{ network_stp_file.path }}"
     state: absent  
+  check_mode: no
+  changed_when: false
   tags: 
     - stp_config  
-
