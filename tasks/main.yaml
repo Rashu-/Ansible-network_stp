@@ -14,8 +14,7 @@
     state: file
     prefix: ansible_
     suffix: "_{{ inventory_hostname }}"
-  register: network_stp_file
-  notify: delete temp file  
+  register: network_stp_file  
   check_mode: no
   changed_when: false
   tags:
@@ -25,7 +24,11 @@
   template:
     src: "{{ ansible_network_os }}_stp.j2"
     dest: "{{ network_stp_file.path }}"         
-  changed_when: false  
+  changed_when: false
+  check_mode: no  
+  when: >
+    ansible_network_os == 'nxos' and
+    stp_config is defined
   tags: 
     - stp_config
 
@@ -41,6 +44,16 @@
 - name: Push stp config to devices
   nxos_config:
     src: "{{ network_stp_file.path }}"
-    save_when: modified
+  when: >
+    ansible_network_os == 'nxos'    
   tags: 
     - stp_config
+
+- name: delete temp file
+  file:
+    path: "{{ network_stp_file.path }}"
+    state: absent  
+  check_mode: no
+  changed_when: false
+  tags: 
+    - stp_config     
